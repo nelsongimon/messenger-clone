@@ -6,6 +6,7 @@ import AuthSocialButton from "./AuthSocialButton";
 import Input from "@/app/components/inputs/Input";
 import { useCallback, useState } from "react";
 import Button from "@/app/components/Button";
+import axios from "axios";
 
 type Variant = "LOGIN" | "REGISTER";
 
@@ -35,11 +36,18 @@ export default function AuthForm() {
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
-
+    
     if (variant === 'REGISTER') {
-      /**
-       * Axios Register
-       */
+      axios.post("/api/register", data)
+      .then((data) => {
+        console.log(data, "USER CREATED");
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
     } else {
       /**
        * Next Auth Sign In
