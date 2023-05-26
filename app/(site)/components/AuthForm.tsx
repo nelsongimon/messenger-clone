@@ -6,6 +6,8 @@ import AuthSocialButton from "./AuthSocialButton";
 import Input from "@/app/components/inputs/Input";
 import { useCallback, useState } from "react";
 import Button from "@/app/components/Button";
+import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
 import axios from "axios";
 
 type Variant = "LOGIN" | "REGISTER";
@@ -17,7 +19,8 @@ export default function AuthForm() {
   const { 
     register, 
     handleSubmit,
-    formState: { errors } 
+    formState: { errors } ,
+    reset
   } = useForm<FieldValues>({
     defaultValues: {
       name: "",
@@ -40,27 +43,53 @@ export default function AuthForm() {
     if (variant === 'REGISTER') {
       axios.post("/api/register", data)
       .then((data) => {
+        toast.success("User created!");
         console.log(data, "USER CREATED");
       })
       .catch((error) => {
         console.log(error);
+        toast.error("Something went wrong!");
       })
       .finally(() => {
         setIsLoading(false);
+        reset();
       });
     } else {
-      /**
-       * Next Auth Sign In
-       */
+      signIn("credentials", {
+        ...data,
+        redirect: false
+      })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error("Invalid credentials");
+        }
+
+        if (callback?.ok && !callback?.error) {
+          toast.success("Logged in");
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        reset();
+      })
     }
   }
 
   const socialAction = (action: string) => {
     setIsLoading(true);
+    signIn(action, { redirect: false })
+      .then((callback) => {
+        if (callback?.error) {
+          toast.error("Invalid credentials");
+        }
 
-    /**
-     * Next Auth Social Sign In
-     */
+        if (callback?.ok && !callback?.error) {
+          toast.success("Logged in");
+        }
+      }).
+      finally(() => {
+        setIsLoading(false);
+      });
   }
 
   return (
