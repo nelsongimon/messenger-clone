@@ -12,7 +12,7 @@ export default function useRoutes() {
   const routes = useMemo(() => [
     {
       label: "Chat",
-      href: "/conversatios",
+      href: "/conversations",
       icon: HiChat,
       active: pathname === "/conversations" || !!conversationId
     },
