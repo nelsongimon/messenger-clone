@@ -1,14 +1,14 @@
 "use client";
 
-import { Conversation, Message, User } from "@prisma/client";
+import useOtherUser from "@/app/hooks/useOtherUser";
 import { FullConversationType } from "@/app/types";
+import Avatar from "@/app/components/Avatar";
 import { useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import clsx from "clsx";
-import useOtherUser from "@/app/hooks/useOtherUser";
-import Avatar from "@/app/components/Avatar";
+import AvatarGroup from "@/app/components/AvatarGroup";
 
 
 interface ConversationBoxProps {
@@ -81,7 +81,11 @@ export default function ConversationBox({
     `, selected ? "bg-neutral-100" : "bg-white"
       )}
     >
-      <Avatar user={otherUser} />
+      {data.isGroup ? (
+        <AvatarGroup users={data.users} />
+      ) : (
+        <Avatar user={otherUser} />
+      )}
       <div className="min-w-0 flex-1">
         <div className="focus:outline-none">
           <div className="

@@ -8,6 +8,7 @@ import { IoClose, IoTrash } from "react-icons/io5";
 import Avatar from "@/app/components/Avatar";
 import ConfirmModal from "./ConfirmModal";
 import { format } from "date-fns";
+import AvatarGroup from "@/app/components/AvatarGroup";
 
 interface ProfileDrawerProps {
   data: Conversation & {
@@ -23,7 +24,7 @@ export default function ProfileDrawer({
   onClose
 }: ProfileDrawerProps) {
   const otherUser = useOtherUser(data);
-  const [confirmOpen, setConfirmOpen] = useState(true);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const joinedDate = useMemo(() => {
     return format(new Date(otherUser.createdAt), "PP");
   }, [otherUser.createdAt]);
@@ -150,7 +151,11 @@ export default function ProfileDrawer({
                       ">
                         <div className="flex flex-col items-center">
                           <div className="mb-2">
-                            <Avatar user={otherUser} />
+                            {data.isGroup ? (
+                              <AvatarGroup users={data.users} />
+                            ) : (
+                              <Avatar user={otherUser} />
+                            )}
                           </div>
                           <div>
                             {title}
@@ -201,6 +206,27 @@ export default function ProfileDrawer({
                               sm:space-y-6
                               sm:px-6
                             ">
+                              {data.isGroup && (
+                                <div>
+                                  <dt className="
+                                    text-sm
+                                    font-medium
+                                    text-gray-500
+                                    sm:w-40
+                                    sm:flex-shrink-0
+                                  ">
+                                    Emails
+                                  </dt>
+                                  <dd className="
+                                    mt-1
+                                    text-sm
+                                    text-gray-900
+                                    sm-col-span-2
+                                  ">
+                                    {data.users.map((user) => user.email).join(", ")}
+                                  </dd>
+                                </div>
+                              )}
                               {!data.isGroup && (
                                 <div>
                                   <dt className="
